@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.Transient;
+
 import com.cg.onlineplantnursery.customer.entity.Customer;
 import com.cg.onlineplantnursery.plant.entity.Plant;
 import com.cg.onlineplantnursery.planter.entity.Planter;
@@ -48,8 +50,11 @@ public class Orders {
 	private int quantity;
 	private double totalCost;
 	
+	@Transient
 	private Integer planterQuantity;
+	@Transient
 	private Integer plantQuantity;
+	@Transient
 	private Integer seedQuantity;
 	
 	@OneToMany(targetEntity = Planter.class, cascade = CascadeType.ALL) 
