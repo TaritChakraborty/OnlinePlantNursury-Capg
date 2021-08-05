@@ -44,6 +44,8 @@ public class ICustomerController {
 	@PostMapping(value = "/order", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> saveOrder(@RequestBody Orders order) {
 		if(validUser == 1) {
+			Customer customer = service.viewCustomer(validId);
+			order.setCustomer(customer);
 			return ResponseEntity.ok(orderservice.addOrder(order));
 		}else
 			return ResponseEntity.ok("Not Logged In");
@@ -82,8 +84,18 @@ public class ICustomerController {
 	
 	
 	@GetMapping("/order/{id}")
-	public Orders viewOrder(@PathVariable("id") Integer orderId) throws OrderIdNotFoundException {
-		return orderservice.viewOrder(orderId);
+	public ResponseEntity<?> viewOrder(@PathVariable("id") Integer orderId) throws OrderIdNotFoundException {
+		if(validUser == 1) {
+			Orders order =  orderservice.viewOrder(orderId);
+			return ResponseEntity.ok("..........................Order Details......................... \n " +
+			                         "Booking id : " + order.getBookingOrderId() + "\n" +
+			                         "Order date : " + order.getOrderDate() + "\n" +
+			                         "Transaction mode : " + order.getTransactionMode() + "\n" +
+			                         "Quantity ordered : " + order.getQuantity() + "\n" +
+			                         "Total Cost : " + order.getTotalCost()); 
+		}else
+			return ResponseEntity.ok("Not Logged In");
+		
 	}
 	
 	@GetMapping("/customer")
@@ -96,15 +108,10 @@ public class ICustomerController {
 			return ResponseEntity.ok("Not Logged In");
 	}
 	
-	@GetMapping("/order")
+	@GetMapping("/orders")
 	public ResponseEntity<?> fetchOrders(){
 		if(validUser == 1) {
-			Customer customer = service.viewCustomer(validId);
-			/*return ResponseEntity.ok(welcome + customer.getCustomerId() +
-									"\n Name : " + customer.getCustomerName() + 
-									"\n Email : " + customer.getCustomerEmail() + 
-	                 				"\n.........................\n Orders --- \n " +
-									customer.getOrders()); */
+			Customer customer = service.viewCustomer(validId);			
 			return ResponseEntity.ok(customer.getOrders()); 
 		}else
 			return ResponseEntity.ok("Not Logged In");

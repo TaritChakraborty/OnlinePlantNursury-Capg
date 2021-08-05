@@ -29,7 +29,7 @@ import com.cg.onlineplantnursery.seed.service.SeedService;
 @RequestMapping("/admin")
 public class AdminController {
 	
-	private int validAdmin = 0;
+	private int validAdmin = 0; //flag variable
 	@Autowired
 	private CustomerService customerservice;
 	
@@ -49,14 +49,13 @@ public class AdminController {
 	
 	@GetMapping("/login/{username}/{password}")
 	public ResponseEntity<?> loginAdmin(@PathVariable("username") String username, @PathVariable("password") String password) {
-		boolean adminvalidity = adminservice.validateAdmin(username, password);
-		if(adminvalidity == true) {
+		if(adminservice.validateAdmin(username, password) == true) {
 			validAdmin = 1;
 			Admin admin = adminservice.viewByAdminUserName(username, password).get();
 			String welcome = "Welcome \n........................\n";
 			return ResponseEntity.ok(welcome + "Id : " + admin.getAdminId() + "\nUsername : " + admin.getAdminUsername());
 		} else
-			return ResponseEntity.ok("Invalid Credentials");				
+			return ResponseEntity.ok("Invalid credentials");
 	}
 	
 	@PostMapping("/admin")
@@ -82,14 +81,7 @@ public class AdminController {
 		}else
 		return ResponseEntity.ok("Not Logged In");
 	}
-	@PostMapping("/customer")
-	public ResponseEntity<?> addCustomer(@Validated @RequestBody Customer customer) {
-		if(validAdmin == 1) {
-			return ResponseEntity.ok(customerservice.addCustomer(customer));
-		}else
-		return ResponseEntity.ok("Not Logged In");
-	}
-	
+		
 	@PatchMapping("/customer/{id}")
 	public ResponseEntity<?> updateCustomerById(@PathVariable("id") Integer customerId,
 			@Validated @RequestBody Map<Object, Object> fields) {
@@ -119,7 +111,6 @@ public class AdminController {
 	@PostMapping("/plant")
 	public ResponseEntity<?> saveOrder(@RequestBody Plant plant) {
 		if(validAdmin == 1) {
-			plant.setPlantsStock(1000);
 			return ResponseEntity.ok(plantservice.addPlant(plant));
 		}else
 		return ResponseEntity.ok("Not Logged In");
@@ -162,7 +153,6 @@ public class AdminController {
 	@PostMapping("/planter")
 	public ResponseEntity<?> addPlanter(@RequestBody Planter planter) {
 		if(validAdmin == 1) {
-			planter.setPlanterStock(1000);
 			return ResponseEntity.ok(planterservice.addPlanter(planter));
 		}else
 		return ResponseEntity.ok("Not Logged In");
@@ -221,7 +211,6 @@ public class AdminController {
 	@PostMapping("/seed")
 	public ResponseEntity<?> addSeed(@RequestBody Seed seed) {
 		if(validAdmin == 1) {
-			seed.setSeedsStock(1000);
 			return ResponseEntity.ok(seedservice.addSeed(seed));
 		}else
 		return ResponseEntity.ok("Not Logged In");
